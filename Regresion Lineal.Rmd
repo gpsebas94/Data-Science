@@ -1,0 +1,77 @@
+---
+title: "Regresión Lineal"
+author: "Juan Sebastián González Pinilla"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+## Importar, limpiar y visualizar los datos
+
+Nos basaremos en unos datos sobre el salario de personas de distintas nacionalidades, con diferentes edades. En este ejercicio nos basarémos únicamente del salario y la edad, la finalidad es predecir el salario que puede ganar una persona de 33, 60 y 25 años. 
+
+- Se usará la librería `readr`
+- Se importará los datos con el delimitador ;
+- Se crean variables basado en las columnas salario y edad
+
+```{r setup}
+library(readr)
+```
+
+```{r message=FALSE}
+data = read_csv("Dia9.csv")
+data
+```
+
+```{r}
+Edad=data$Edad;Edad
+Salario=data$Salario;Salario
+```
+
+Creamos dos dataset nuevos con los NaN eliminados
+
+```{r}
+dataEdad=data[!is.na(data$Edad),]
+dataSalario=data[!is.na(data$Salario),]
+```
+
+Reemplazamos los NaN del dataframe original con la media de los datos dataframe nuevos (porque no contienen el NaN) 
+```{r}
+data$Edad[is.na(data$Edad)] = mean(dataEdad$Edad)
+data$Salario[is.na(data$Salario)] = mean(dataSalario$Salario)
+data
+```
+
+## Modelar la ecuación de Regresión
+Modelar el salario por la variable edad
+```{r}
+lm_Sal_Ed = lm(Salario~Edad,data=data)
+lm_Sal_Ed
+```
+
+Visualizamos los valores y la curva del modelo de regresión lineal
+```{r}
+plot(Edad,Salario,main="Modelo de Regresión Lineal")
+abline(lm_Sal_Ed, col = "red")
+```
+
+## Predicción
+Creamos un marco de datos invisible, que será el valor que vamos a predecir
+```{r}
+valor_predecir = data.frame(Edad = c(33,60,25));valor_predecir
+```
+
+Predecirmos el valor creado con base en el modelo de regresión
+```{r}
+predict(lm_Sal_Ed, newdata = valor_predecir)
+```
+
+### Conclusiones
+Basado en el modelo lineal que se estimó a partir del conjunto de datos de `data`, se predijo que:
+
+- El salario promedio para un trabajador de 33 años sería de alrededor de 55.372 dólares al año
+- El salario promedio para un trabajador de 60 años sería de alrededor de 94.652,85 dólares al año
+- El salario promedio para un trabajador de 25 años sería de alrededor de 43.733,23 dólares al año
+
